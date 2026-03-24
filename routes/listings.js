@@ -17,8 +17,7 @@ router
     validateListing,
     wrapAsync(listingController.createListing)
     );
-
-   
+  
 
     //New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);
@@ -50,7 +49,18 @@ router.get(
 router.get("/category/:type", async (req, res) => {
   const { type } = req.params;
   const listings = await Listing.find({ category: type }); // assuming 'category' field exists
-  res.render("listings/index", { listings });
+  res.render("listings/index", { allListings:listings });
+
 });
+
+//chat gpt 
+router.get("/search", async (req, res) => {
+  const { query } = req.query;
+  const listings = await Listing.find({
+    title: { $regex: query, $options: "i" },
+  });
+  res.render("searchResults", { listings, query });
+});
+
 
 module.exports = router;

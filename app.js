@@ -40,6 +40,7 @@ main()
   app.use(methodOverride("_method"));
   app.engine("ejs", ejsMate);
   app.use(express.static(path.join(__dirname, "/public")));
+  
 
   const store = MongoStore.create({
     mongoUrl: dbUrl,
@@ -68,6 +69,14 @@ main()
 // app.get("/",(req, res) =>{
 //   res.send("Hi, I am root");
 // });
+// ये कोड आपके app.js या main server फाइल में होना चाहिए
+// इसे routes से पहले रखें
+
+
+app.get("/search", (req, res) => {
+  const query = req.query.query;
+  res.render("searchResults", { query });
+});
 
 
 
@@ -102,9 +111,10 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
 app.use("/", userRouter);
 
-app.all("*",(req, res, next) =>{
-  next(new ExpressError(404, "Page Not Found!"));
+app.all("*", (req, res) => {
+  res.redirect("/listings"); // ya jo bhi aapka Explore page route hai
 });
+
 
 app.use((err, req, res, next) =>{
   let {statusCode = 500, message ="Something went wrong!"} = err;

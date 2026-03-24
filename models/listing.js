@@ -14,7 +14,22 @@ const listingSchema = new Schema({
     },
     price: Number,
     location: String,
-    country:String,
+    category: {                     // ✅ Add this
+        type: String,
+        enum: [
+            "trending",
+            "rooms",
+            "cities",
+            "mountains",
+            "castles",
+            "pools",
+            "camping",
+            "farms",
+            "arctic",
+            "domes",
+            "boats"
+        ]
+    },
     reviews: [
         {
             type: Schema.Types.ObjectId,
@@ -27,11 +42,13 @@ const listingSchema = new Schema({
     },
 });
 
+
 listingSchema.post("findOneAndDelete", async (listing) =>{
     if(listing) {
         await Review.deleteMany({_id : {$in: listing.reviews} });
     }
     });
+
     
 const Listing = mongoose.model("Listing",listingSchema);
 module.exports = Listing;
